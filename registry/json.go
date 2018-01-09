@@ -3,7 +3,9 @@ package registry
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
+	"net/url"
 	"regexp"
 )
 
@@ -42,7 +44,24 @@ func (registry *Registry) getPaginatedJson(url string, response interface{}) (st
 	if err != nil {
 		return "", err
 	}
-	return getNextLink(resp)
+	urlpath, err := getNextLink(resp)
+	if err != nil {
+		return "", err
+	}
+
+	return joinUrl(registry.URL, urlpath)
+}
+
+func joinUrl(baseUrl, path string) (string, error) {
+	u, err := url.Parse(path)
+	if err != nil {
+		return "", err
+	}
+	base, err := url.Parse(baseUrl)
+	if err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("%s", base.ResolveReference(u)), nil
 }
 
 // Matches an RFC 5988 (https://tools.ietf.org/html/rfc5988#section-5)
