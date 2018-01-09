@@ -98,7 +98,7 @@ func (registry *Registry) ManifestDigestV2(repository, reference string) (digest
 	if err != nil {
 		return "", err
 	}
-	return digest.ParseDigest(resp.Header.Get("Docker-Content-Digest"))
+	return digest.Parse(resp.Header.Get("Docker-Content-Digest"))
 }
 
 func (registry *Registry) DeleteManifest(repository string, digest digest.Digest) error {
